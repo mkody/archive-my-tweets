@@ -841,6 +841,8 @@ class Twitter
             $parameters['include_rts'] = ($includeRts) ? 'true' : 'false';
         }
 
+        $parameters['tweet_mode'] = 'extended';
+
         // make the call
         return (array) $this->doCall(
             'statuses/user_timeline.json',

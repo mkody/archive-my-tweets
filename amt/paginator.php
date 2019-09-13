@@ -23,21 +23,23 @@ class Paginator {
 
         $pageMarker = ($niceUrl) ? 'page/' : '&page=';
 
-        $html = '<div class="amt-pagination"><ul class="pager">';
+        $html = '<nav><ul class="pagination justify-content-center">';
 
         if ($currentPage > 1) {
-            $html .= '<li class="previous"><a href="' . $baseUrl . $pageMarker . ($currentPage - 1) . '">&larr; Newer Tweets</a></li>';
-        }
+            $html .= '<li class="page-item"><a class="page-link" href="' . $baseUrl . $pageMarker . ($currentPage - 1) . '" tabindex="-1">Newer Tweets</a></li>';
+        } else {
+            $html .= '<li class="page-item disabled"><span class="page-link">Previous</span></li>';
+	}
+
+        $html .= '<li class="page-item disabled"><span class="page-link">Page ' . $currentPage . ' of ' . $numPages . '<span></li>';
 
         if ($currentPage < $numPages) {
-            $html .= '<li class="next"><a href="' . $baseUrl . $pageMarker . ($currentPage + 1) . '">Older Tweets &rarr;</a></li>';
-        }
+            $html .= '<li class="page-item"><a class="page-link" href="' . $baseUrl . $pageMarker . ($currentPage + 1) . '">Older Tweets</a></li>';
+        } else {
+            $html .= '<li class="page-item disabled"><span class="page-link">Older Tweets</span></li>';
+	}
 
-        $html .= '</ul>';
-
-        $html .= '<div class="pages">Page ' . $currentPage . ' of ' . $numPages . '</div>';
-
-        $html .= '</div>';
+        $html .= '</ul></nav>';
 
         return $html;
 

@@ -37,33 +37,73 @@ class Tweet {
     /**
      * Returns the tweet text all linked up.
      */
-    public function get_linked_tweet() {
+    public function format_tweet($t) {
+        $text = '(((THIS ARCHIVED TWEET IS BROKEN, CONTACT KODY ASAP)))';
 
+        if (is_object($t)) {
+            if (isset($t->retweeted_status)) {
+                $text = 'RT @' . $t->retweeted_status->user->screen_name . ': ' . ((isset($t->retweeted_status->full_text)) ? $t->retweeted_status->full_text : $t->retweeted_status->text);
+                if (isset($t->retweeted_status->entities)) $t->entities = $t->retweeted_status->entities;
+            } else {
+                $text = (isset($t->full_text)) ? $t->full_text : $t->text;
+            }
+
+            if (isset($t->entities->urls)) {
+                foreach ($t->entities->urls as $e) {
+                    $text = str_replace(
+                        $e->url,
+                        '<a target="_blank" rel="noopener noreferrer" href="' . $e->expanded_url . '">' . $e->display_url . '</a>',
+                        $text
+                    );
+                }
+            }
+        } else {
+            if ($t['retweeted'] && isset($t['retweeted_status'])) {
+                $text = 'RT @' . $t['retweeted_status']['user']['screen_name'] . ': ' . ((isset($t['retweeted_status']['full_text'])) ? $t['retweeted_status']['full_text'] : $t['retweeted_status']['text']);
+                if (isset($t['retweeted_status']['entities'])) $t['entities'] = $t['retweeted_status']['entities'];
+            } else {
+                $text = (isset($t['full_text'])) ? $t['full_text'] : $t['text'];
+            }
+
+            if (isset($t['entities']['urls'])) {
+                foreach ($t['entities']['urls'] as $e) {
+                    $text = str_replace(
+                        $e['url'],
+                        '<a target="_blank" rel="noopener noreferrer" href="' . $e['expanded_url'] . '">' . $e['display_url'] . '</a>',
+                        $text
+                    );
+                }
+            }
+        }
+
+        return $text;
+   }
+
+    public function get_linked_tweet() {
         // props to: http://davidwalsh.name/linkify-twitter-feed
 
         // linkify URLs
         $status_text = preg_replace(
-            '/(https?:\/\/\S+)/',
-            '<a href="\1">\1</a>',
+            '/(?<!["\']>|["\'])(https?:\/\/\S+)/i',
+            '<a target="_blank" rel="noopener noreferrer" href="$0">$0</a>',
             $this->tweet
         );
 
         // linkify twitter users
         $status_text = preg_replace(
             '/(^|\s)(@(\w+))/',
-            '\1<a href="https://twitter.com/\3">\2</a>',
+            '\1<a target="_blank" rel="noopener noreferrer" href="https://twitter.com/\3">\2</a>',
             $status_text
         );
 
         // linkify tags
         $status_text = preg_replace(
             '/(^|\s)(#(\S+))/',
-            '\1<a href="https://twitter.com/search?q=%23\3">\2</a>',
+            '\1<a target="_blank" rel="noopener noreferrer" href="https://twitter.com/search?q=%23\3">\2</a>',
             $status_text
         );
 
-        return $status_text;
-
+        return nl2br($status_text);
     }
 
     /**
@@ -74,7 +114,7 @@ class Tweet {
         $this->id = $t['id'];
         $this->user_id = $t['user']['id'];
         $this->created_at = date('Y-m-d H:i:s', strtotime($t['created_at']));
-        $this->tweet = $t['text'];
+        $this->tweet = $this->format_tweet($t);
         $this->source = $t['source'];
         $this->truncated = ($t['truncated']) ? '1' : '0';
         $this->favorited = ($t['favorited']) ? '1' : '0';
@@ -96,7 +136,7 @@ class Tweet {
         $this->retweeted_status_user_id = (isset($t->retweeted_status)) ? $t->retweeted_status->user->id : null;
         $this->created_at               = date('Y-m-d H:i:s', strtotime($t->created_at));
         $this->source                   = $t->source;
-        $this->tweet                    = $t->text;
+        $this->tweet                    = $this->format_tweet($t);
         $this->user_id                  = $t->user->id;
         // Not included in JSON
         $this->favorited                = 0;

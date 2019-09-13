@@ -1,3 +1,68 @@
+
+/*-- general ----------------------------------------------- */
+
+body {
+	padding-top: 60px;
+	background: #eee !important;
+}
+
+.navbar .avatar {
+	margin: -10px 0 0;
+	width: 41px;
+	height: 20px;
+}
+
+@media (max-width: 979px) {
+	.navbar .avatar {
+		margin: -15px 0 0 !important;
+		width: 51px;
+	}
+}
+
+.rounded {
+	padding: 30px;
+	background: #fff;
+	border: 1px solid #e5e5e5;
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	border-radius: 5px;
+}
+
+.rounded .page-header {
+	margin-top: -15px;
+	margin-bottom: 20px;
+	padding-left: 30px;
+	padding-right: 30px;
+}
+
+
+/*-- tweets ----------------------------------------------- */
+
+#tweets {
+	padding: 30px 0;
+}
+
+#tweets .tweet {
+	margin-bottom: 15px;
+	padding: 0 30px 10px 30px;
+	border-bottom: 1px solid #eee;
+}
+
+#tweets .tweet p {
+	margin: 0;
+}
+
+#tweets .tweet .meta,
+#tweets .tweet .meta a {
+	color: #999;
+	font-size: 12px;
+}
+
+#tweets .no-tweets {
+	padding: 0 30px;
+}
+
+
 /*-- pagination ----------------------------------------------- */
 
 #pagination {
